@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'register_style.css' %}">
+    <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <title>Login & Registration</title>
+</head>
+<body class="d-flex text-center">
+    <form class="form-login" action="/register" method="POST">
+        <img src="{% static 'img/logo.png' %}" class="img-fluid" alt="prospector-logo"><br>
+        {% csrf_token %}
+        <label for="fname" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="fname" name="fname">
+        <label for="lname" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lname" name="lname">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="text" class="form-control" id="email" name="email">
+        <label for="passwd" class="form-label">Password</label>
+        <input type="password" class="form-control" id="passwd" name="passwd">
+        <label for="confirm-passwd" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="confirm-passwd" name="confirm_passwd">
+        <p>Already have an account?<a href="/">  Login</a></p>
+        <div id="errors">
+            {% if messages %}
+                    {% for message in messages %}
+                        <p class="errors">{{ message }}</li>
+                    {% endfor %}
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+</body>
+</html>

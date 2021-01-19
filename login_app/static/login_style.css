@@ -1,0 +1,25 @@
+html, body {
+    height: 85%;
+    background-color: #f4f4f4;
+}
+.form-login {
+    width: 100%;
+    max-width: 350px;
+    padding: 50px 25px;
+    margin: auto;
+    z-index: 0;
+}
+.errors {
+    list-style-type: none;
+    font-size: 14px;
+    color: red;
+}
+img {
+    -moz-transform: translate(0px, 60px);
+    -webkit-transform: translate(0px, 60px);
+    -o-transform: translate(0px, 60px);
+    -ms-transform: translate(0px, 60px);
+    transform: translate(0px, 60px);
+    z-index: -1;
+    position: relative;
+}

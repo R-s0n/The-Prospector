@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'login_style.css' %}">
+    <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <title>Login</title>
+</head>
+<body class="d-flex text-center">
+    <form class="form-login" action="/login" method="POST">
+        <img src="{% static 'img/logo.png' %}" class="img-fluid" alt="prospector-logo">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" name="email">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" name="passwd">
+        </div>
+        <p>Need an account?<a href="/register_form">  Register</a></p>
+        <div id="errors">
+            {% if messages %}
+                    {% for message in messages %}
+                        <p class="errors">{{ message }}</li>
+                    {% endfor %}
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</body>
+</html>
