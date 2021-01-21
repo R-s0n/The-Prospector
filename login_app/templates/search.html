@@ -5,9 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'home_style.css' %}">
+        <link rel="stylesheet" href="{% static 'search_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Login</title>
+        <title>Search</title>
     </head>
 <body>
     <header>
@@ -47,7 +47,10 @@
         </div>
     </header>
     <main>
-        Welcome Home!
+        <form action="/request" method="POST">
+            {% csrf_token %}
+            URL: <input type="text" name="url">
+            <input type="submit" value="Go">
     </main>
 </body>
 </html>

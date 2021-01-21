@@ -5,9 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'home_style.css' %}">
+        <link rel="stylesheet" href="{% static 'users_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Login</title>
+        <title>Users</title>
     </head>
 <body>
     <header>
@@ -22,7 +22,7 @@
                             <a class="nav-link active" href="/home">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/search">Search</a>
+                            <a class="nav-link" href="#">Search</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Favorites</a>
@@ -47,7 +47,42 @@
         </div>
     </header>
     <main>
-        Welcome Home!
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-11">
+                    <h2>Manage Users</h2>
+                </div>
+                <div class="col-1 mt-3">
+                    {% if logged_user.admin == True %}
+                        <a href="/adduser">Add New</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <table class="table table_stripped mt-2">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Last Login</th>
+                <th>Privileges</th>
+                {% if logged_user.admin == True %}
+                    <th>Actions</th>
+                {% endif %}
+            </tr>
+            {% for user in all_users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td><a href="/users/{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</a></td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.last_login }} UTC</td>
+                    <td>{% if user.admin == True %}Administrator{% endif %}{% if user.admin == False %}User{% endif %}</td>
+                    {% if logged_user.admin == True %}
+                        <td><a href="/users/{{ user.id }}/edit">Edit</a> | <a href="/users/{{ user.id }}/delete">Remove</a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
     </main>
 </body>
 </html>

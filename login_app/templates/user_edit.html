@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'user_edit_style.css' %}">
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+        <title>Edit Profile</title>
+    </head>
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2">
+                    <img src="{% static 'img/logo.png' %}" class="img-fluid" alt="prospector-logo">
+                </div> 
+                <div class="col-7">
+                    <ul class="nav mt-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/home">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Favorites</a>
+                        </li>
+                        {% if logged_user.admin == True %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Comments</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-2 mt-4 text-center text-primary">
+                    <p>Welcome, {{ logged_user.first_name }}!</p>
+                </div>
+                <div class="col-1 mt-4">
+                    <a href="/users/{{ logged_user.id }}">Profile</a> | <a href="/logout">Log Out</a>
+                </div>   
+            </div>     
+        </div>
+    </header>
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-10">
+                    <h2 id="top-header">Edit Profile - {{ this_user.first_name }} {{ this_user.last_name }}</h2>
+                </div>
+                <div class="col-2">
+                    {% if logged_user.admin == True and this_user.admin != True%}
+                        <form action="/makeadmin" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ this_user.id }}">
+                            <button type="submit" class="btn btn-primary mt-3">Make Admin</button>                                
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Edit Information</h4>
+                    <form action="/edituserinfo" method="POST">
+                        {% csrf_token %}
+                        <label for="fname" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="fname" name="fname">
+                        <label for="lname" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lname" name="lname">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="text" class="form-control" id="email" name="email">
+                        <input type="hidden" name="user_id" value="{{ this_user.id }}">
+                        <div id="errors" class="mt-2">
+                            {% if messages and request.session.error_from == 1 %}
+                                    {% for message in messages %}
+                                        <p class="errors">{{ message }}</li>
+                                    {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>                                
+                    </form>
+                </div>
+                <div class="col-6">
+                    <h4>Edit Password</h4>
+                    <form action="/changepassword" method="POST">
+                        {% csrf_token %}
+                        <label for="passwd" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="passwd" name="current_passwd">
+                        <label for="passwd" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="passwd" name="passwd">
+                        <label for="confirm-passwd" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm-passwd" name="confirm_passwd">                
+                        <input type="hidden" name="user_id" value="{{ this_user.id }}">
+                        <div id="errors">
+                            {% if messages and request.session.error_from == 2 %}
+                                    {% for message in messages %}
+                                        <p class="errors">{{ message }}</li>
+                                    {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Submit</button>                                
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
