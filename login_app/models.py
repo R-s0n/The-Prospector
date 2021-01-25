@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 import re, datetime
 
 class UserManager(models.Manager):
@@ -82,3 +83,65 @@ class User(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Search(models.Model):
+    service = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    radius = models.IntegerField(default=50)
+
+    user = models.ForeignKey(User, related_name="searches", on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Company(models.Model):
+    name = models.CharField(max_length=255)
+    size = models.CharField(max_length=255, default="Unknown")
+    revenue = models.CharField(max_length=255, default="Unknown")
+    headquarters = models.CharField(max_length=255, default="Unknown")
+    industry = models.CharField(max_length=255, default="Unknown")
+    founded = models.CharField(max_length=255, default="Unknown")
+    last_edited_by = models.CharField(max_length=255, default="Noone")
+    last_edited_on = models.DateField(default=timezone.now())
+
+    indeed_link = models.CharField(max_length=255, default="/")
+    dnb_link = models.CharField(max_length=255, default="/")
+    glassdoor_link = models.CharField(max_length=255, default="/")
+    google_link = models.CharField(max_length=255, default="/")
+
+    searches = models.ManyToManyField(Search, related_name="companies")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Job(models.Model):
+    title = models.CharField(max_length=255)
+    desc_short = models.CharField(max_length=255, default="")
+    desc_long = models.TextField(default="")
+    date_posted = models.CharField(max_length=255, default="30+ days ago")
+    link = models.CharField(max_length=255, default="")
+
+    searches = models.ManyToManyField(Search, related_name="jobs")
+
+    company = models.ForeignKey(Company, related_name="jobs", on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Contact(models.Model):
+    first_name = models.CharField(max_length=255, default="")
+    last_name = models.CharField(max_length=255, default="")
+    email = models.CharField(max_length=255, default="")
+    linked_in = models.CharField(max_length=255, default="")
+    department = models.CharField(max_length=255, default="")
+    position = models.CharField(max_length=255, default="")
+    notes = models.TextField(default="")
+
+    company = models.ForeignKey(Company, related_name="contacts", on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+

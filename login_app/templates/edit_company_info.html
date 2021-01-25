@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'edit_company_info_style.css' %}">
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+        <title>Search Results</title>
+    </head>
+<body>
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-2">
+                    <img src="{% static 'img/logo.png' %}" class="img-fluid" alt="prospector-logo">
+                </div> 
+                <div class="col-7">
+                    <ul class="nav mt-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/home">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/search">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Favorites</a>
+                        </li>
+                        {% if logged_user.admin == True %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Comments</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-2 mt-4 text-center text-primary">
+                    <p>Welcome, {{ logged_user.first_name }}!</p>
+                </div>
+                <div class="col-1 mt-4">
+                    <a href="/users/{{ logged_user.id }}">Profile</a> | <a href="/logout">Log Out</a>
+                </div>   
+            </div>     
+        </div>
+    </header>
+    <main>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <h1 class="text-primary">{{ this_company.name }}</h1>
+                </div>
+                <div class="col-3">
+                    {% if this_company.indeed_link != "/" and this_company.indeed_link != "#" %} <a href="https://www.indeed.com{{ this_company.indeed_link }}" target="_blank">Indeed</a> |{% endif %}
+                    <a href={{ this_company.dnb_link }} target="_blank">DnB</a> |
+                    <a href={{ this_company.glassdoor_link }} target="_blank">Glassdoor</a> |
+                    <a href={{ this_company.google_link }} target="_blank">Google</a>
+                </div>
+                <div class="col-3">
+                </div>
+            </div>
+            <form class="row" action="/processeditcompany" method="POST">
+                {% csrf_token %}
+                <div class="col-3">
+                    <label for="company_hq" class="form-label">Headquarters:</label>
+                    <input type="text" class="form-control" id="company_hq" placeholder="{{ this_company.headquarters }}" name="headquarters">
+                    {% if this_company.headquarters != "Unknown" %}
+                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    {% endif %}
+                </div>
+                <div class="col-3">
+                    <label for="company_rev" class="form-label">Revenue:</label>
+                    <input type="text" class="form-control" id="company_rev" placeholder="{{ this_company.revenue }}" name="revenue">
+                    {% if this_company.revenue != "Unknown" %}
+                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    {% endif %}
+                </div>
+                <div class="col-3">
+                    <label for="company_size" class="form-label">Size:</label>
+                    <input type="text" class="form-control" id="company_size" placeholder="{{ this_company.size }}" name="size">
+                    {% if this_company.size != "Unknown" %}
+                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    {% endif %}
+                </div>
+                <div class="col-3">
+                    <label for="company_ind" class="form-label">Industry:</label>
+                    <input type="text" class="form-control" id="company_ind" placeholder="{{ this_company.industry }}" name="industry">
+                    {% if this_company.industry != "Unknown" %}
+                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    {% endif %}
+                </div>
+                <input type="hidden" value="{{ this_company.id }}" name="company_id">
+                <div class="col-11 mt-3"></div>
+                <div class="col-1 mt-3">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <h6>Jobs Posted:</h6>
+                <table class="table-striped table-hover w-100">
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Date Posted</th>
+                    </tr>
+                    {% for job in jobs %}
+                        <tr>
+                            <td>{{ job.title }}</td>
+                            <td>{{ job.desc_short }}</td>
+                            <td>{{ job.date_posted }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-6">
+                <h6>Searches:</h6>
+                <table class="table-striped table-hover w-100">
+                    <tr>
+                        <th>Service</th>
+                        <th>Location</th>
+                        <th>User</th>
+                    </tr>
+                    {% for search in searches %}
+                        <tr>
+                            <td>{{ search.service }}</td>
+                            <td>{{ search.city }}, {{ search.state }}</td>
+                            <td>{{ search.user.first_name }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h5>Contacts:</h5>
+                <table class="table-striped table-hover w-100">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Linked In</th>
+                        <th>Department</th>
+                        <th>Job Title</th>
+                        <th>Notes</th>
+                    </tr>
+                    {% for contact in contacts %}
+                    <tr>
+                        <td>{{ contact.first_name }} {{ contact.last_name }}</td>
+                        <td>{{ contact.email }}</td>
+                        <td>{{ contact.linked_in }}</td>
+                        <td>{{ contact.department }}</td>
+                        <td>{{ contact.position }}</td>
+                        <td>{{ contact.notes }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

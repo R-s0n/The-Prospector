@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils import timezone
-from .models import User
+from .models import User, Search, Company, Job, Contact
 import bcrypt, datetime, requests
 from bs4 import BeautifulSoup
 
@@ -183,14 +183,152 @@ def search(request):
     }
     return render(request, "search.html", context)
 
-def request(request):
+def search_process(request):
     if 'userid' not in request.session:
         return redirect("/")
-    page = requests.get(request.POST['url'])
-    soup = BeautifulSoup(page.content, 'html.parser')
-    pretty_soup = soup.prettify()
+    service = request.POST['service'].replace(" ", "+")
+    search_page = requests.get(f"https://indeed.com/jobs?q={service}&l={request.POST['city']},+{request.POST['state']}&radius={request.POST['radius']}&limit=50&sort=date")
+    soup = BeautifulSoup(search_page.content, 'html.parser')
+    this_search = Search.objects.create(service=request.POST['service'], city=request.POST['city'], state=request.POST['state'], radius=request.POST['radius'], user=User.objects.filter(id=request.session['userid']).first())
+    print(f"Search ID: {this_search.id}")
+    companies = soup.find_all('span', class_="company")
+    company_titles = []
+    company_objects_list = []
+    temp_arr = []
+    job_titles = []
+    date_posted = []
+    indeed_links = []
+    for company in companies:
+        temp_arr.append(company.get_text())
+        if company.a:
+            indeed_links.append(company.a['href'])
+        else:
+            indeed_links.append("#")
+    for each in temp_arr:
+        company_titles.append(each.replace('\n', ''))
+    for company in company_titles:
+        does_company_exist = Company.objects.filter(name=company).first()
+        if not does_company_exist:
+            this_company = Company.objects.create(name=company)
+        else:
+            this_company = does_company_exist
+        this_search.companies.add(this_company)
+        company_objects_list.append(this_company)
+    jobs = soup.find_all('a', class_="jobtitle turnstileLink")
+    for job in jobs:
+        job_titles.append(job.attrs['title'])
+    dates = soup.find_all('span', class_="date")
+    for date in dates:
+        date_posted.append(date.get_text())
+    for i in range(len(jobs)):
+        this_job = Job.objects.create(title=job_titles[i], date_posted=date_posted[i], company=company_objects_list[i])
+        this_search.jobs.add(this_job)
+        this_company = company_objects_list[i]
+        this_company.indeed_link = indeed_links[i]
+        company_name_urlencoded = this_company.name.replace(" ", "%20")
+        this_company.dnb_link = f"https://www.dnb.com/business-directory/top-results.html?term={company_name_urlencoded}&page=1"
+        this_company.glassdoor_link = f"https://www.glassdoor.com/Reviews/company-reviews.htm?sc.keyword={company_name_urlencoded}"
+        this_company.google_link = f"https://google.com/search?q={company_name_urlencoded}"
+        this_company.save()
+    return redirect("/search/results")
+
+def search_results(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    this_search = logged_user.searches.all().last()
+    jobs = this_search.jobs.all()
     context = {
-        "soup" : soup,
-        "pretty_soup" : pretty_soup
+        "logged_user" : logged_user,
+        "this_search" : this_search,
+        "jobs" : jobs
     }
-    return render(request, "test.html", context)
+    return render(request, "search_results.html", context)
+
+def company_info(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    if not Company.objects.filter(id=id).first():
+        return redirect("/companynotfound")
+    this_company = Company.objects.filter(id=id).first()
+    company_jobs = this_company.jobs.all()
+    jobs = []
+    for job in company_jobs:
+        not_in = True
+        for each in jobs:
+            if job.title == each.title:
+                not_in = False
+        if not_in == True:
+            jobs.append(job)
+    searches = this_company.searches.all()
+    contacts = this_company.contacts.all()
+    context = {
+        "this_company" : this_company,
+        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
+        "jobs" : jobs,
+        "searches" : searches,
+        "contacts" : contacts
+    }
+    return render(request, "company_info.html", context)
+
+def company_not_found(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    return render(request, "company_not_found.html")
+
+def edit_company_info(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    this_company = Company.objects.filter(id=id).first()
+    company_jobs = this_company.jobs.all()
+    jobs = []
+    for job in company_jobs:
+        not_in = True
+        for each in jobs:
+            if job.title == each.title:
+                not_in = False
+        if not_in == True:
+            jobs.append(job)
+    searches = this_company.searches.all()
+    contacts = this_company.contacts.all()
+    context = {
+        "this_company" : this_company,
+        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
+        "jobs" : jobs,
+        "searches" : searches,
+        "contacts" : contacts
+    }
+    return render(request, "edit_company_info.html", context)
+
+def process_edit_company(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    this_company = Company.objects.filter(id=request.POST['company_id']).first()
+    if request.POST['headquarters']:
+        this_company.headquarters = request.POST['headquarters']
+    if request.POST['revenue']:
+        this_company.revenue = request.POST['revenue']
+    if request.POST['size']:
+        this_company.size = request.POST['size']
+    if request.POST['industry']:
+        this_company.industry = request.POST['industry']
+    this_company.last_edited_by = logged_user.first_name
+    this_company.last_edited_on = timezone.now()
+    this_company.save()
+    return redirect(f"/company/{this_company.id}")
+
+def add_contact(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    context = {
+        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
+        "this_company" : Company.objects.filter(id=id).first
+    }
+    return render(request, "add_contact.html", context)
+
+def process_add_contact(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    Contact.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], linked_in=request.POST['linked_in'], department=request.POST['department'], position=request.POST['position'], notes=request.POST['notes'], company=Company.objects.filter(id=request.POST['company_id']).first())
+    return redirect(f"/company/{request.POST['company_id']}")

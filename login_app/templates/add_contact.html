@@ -5,9 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'search_style.css' %}">
+        <link rel="stylesheet" href="{% static 'add_contact_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Search</title>
+        <title>Add Contact</title>
     </head>
 <body>
     <header>
@@ -23,6 +23,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/search">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">History</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Favorites</a>
@@ -47,46 +50,33 @@
         </div>
     </header>
     <main>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-5">
-                    <h1>Jobs:</h1>
-                    {% for job in job_titles %}
-                        <p>{{ job }}</p>
-                    {% endfor %}
-                </div>
-                <div class="col-3">
-                    <h1>Companies:</h1>
-                    {% for company in company_titles %}
-                        <p>{{ company }}</p>
-                    {% endfor %}
-                </div>
-                <div class="col-2">
-                    <h1>Links:</h1>
-                    {% for link in indeed_links %}
-                        {% if link != "No Link Available" %}
-                            <p><a href="https://indeed.com{{ link }}">Indeed</a></p>
-                        {% else %}
-                            <p>{{ link }}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="col-2">
-                    <h1>Dates:</h1>
-                    {% for date in date_posted %}
-                        <p>{{ date }}</p>
-                    {% endfor %}
-                </div>
-                <table class="table-striped">
-                    <tr>
-                        <th>Job Title</th>
-                        <th>Company</th>
-                        <th>Date Posted</th>
-                        <th>Links</th>
-                    </tr>
-                </table>
+        <h3 class="text-secondary">Add Contact - <span class="text-primary">{{ this_company.name }}</span></h3>
+        <form class="form" action="/processaddcontact" method="POST">
+            {% csrf_token %}
+            <label for="fname" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="fname" name="fname">
+            <label for="lname" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lname" name="lname">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="text" class="form-control" id="email" name="email">
+            <label for="linked_in" class="form-label">Linked In</label>
+            <input type="text" class="form-control" id="linked_in" name="linked_in">
+            <label for="department" class="form-label">Department</label>
+            <input type="text" class="form-control" id="department" name="department">
+            <label for="position" class="form-label">Job Title</label>
+            <input type="text" class="form-control" id="position" name="position">
+            <label for="notes" class="form-label">Additional Notes</label>
+            <textarea class="form-control" name="notes" id="notes"rows="5"></textarea>
+            <input type="hidden" name="company_id" value="{{ this_company.id }}">
+            <div id="errors">
+                {% if messages %}
+                        {% for message in messages %}
+                            <p class="errors">{{ message }}</li>
+                        {% endfor %}
+                {% endif %}
             </div>
-        </div>
+            <button type="submit" class="btn btn-primary mt-3">Add Contact</button>
+        </form>
     </main>
 </body>
 </html>

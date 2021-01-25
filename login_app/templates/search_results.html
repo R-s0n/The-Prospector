@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% load static %}
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'search_style.css' %}">
-        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Search</title>
-    </head>
+    <html lang="en">
+        <head>
+            {% load static %}
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+            <link rel="stylesheet" href="{% static 'search_results.css' %}">
+            <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+            <title>Search Results</title>
+        </head>
 <body>
     <header>
         <div class="container-fluid">
@@ -49,16 +50,28 @@
             </div>     
         </div>
     </header>
-    </header>
     <main>
-        <form action="/search/process" method="POST">
-            {% csrf_token %}
-            Service: <input type="text" name="service">
-            City: <input type="text" name="city">
-            State: <input type="text" name="state">
-            Radius (km): <input type="text" name="radius">
-            <input type="submit" value="Go">
-        </form>
+        <h3>Search For {{ this_search.service }} - {{ this_search.city }}, {{ this_search.state }}</h3>
+        <table class="table-striped table-hover w-100">
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Annual Revenue</th>
+                <th>Headquarters</th>
+                <th>Size</th>
+                <th>Date Posted</th>
+            </tr>
+            {% for job in jobs %}
+                <tr>
+                    <td>{{ job.title }}</td>
+                    <td><a href="/company/{{ job.company.id }}">{{ job.company.name }}</a></td>
+                    <td>{{ job.company.revenue }}</td>
+                    <td>{{ job.company.headquarters }}</td>
+                    <td>{{ job.company.size }}</td>
+                    <td>{{ job.date_posted }}</td>
+                </tr>
+            {% endfor %}
+        </table>
     </main>
 </body>
 </html>
