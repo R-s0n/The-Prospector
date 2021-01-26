@@ -71,6 +71,19 @@ class UserManager(models.Manager):
             errors["email"] = "Please enter a valid email address"
         return errors
 
+class SearchManager(models.Manager):
+    def search_validator(self, postData):
+        errors = {}
+        if len(postData['service']) < 1:
+            errors["service"] = "Please enter a service to search for"
+        if len(postData['city']) < 1:
+            errors["city"] = "Please enter a city"
+        if len(postData['state']) != 2:
+            errors["state"] = "Please choose a state"
+        if len(postData['radius']) < 1:
+            errors["radius"] = "How did you pull this off?  Burp Suite??"
+        return errors
+
 class User(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -91,6 +104,8 @@ class Search(models.Model):
     radius = models.IntegerField(default=50)
 
     user = models.ForeignKey(User, related_name="searches", on_delete=models.CASCADE)
+
+    objects = SearchManager()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

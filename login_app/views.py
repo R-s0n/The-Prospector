@@ -186,6 +186,11 @@ def search(request):
 def search_process(request):
     if 'userid' not in request.session:
         return redirect("/")
+    errors = Search.objects.search_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect(f"/search")
     service = request.POST['service'].replace(" ", "+")
     search_page = requests.get(f"https://indeed.com/jobs?q={service}&l={request.POST['city']},+{request.POST['state']}&radius={request.POST['radius']}&limit=50&sort=date")
     soup = BeautifulSoup(search_page.content, 'html.parser')
@@ -220,6 +225,7 @@ def search_process(request):
     dates = soup.find_all('span', class_="date")
     for date in dates:
         date_posted.append(date.get_text())
+
     for i in range(len(jobs)):
         this_job = Job.objects.create(title=job_titles[i], date_posted=date_posted[i], company=company_objects_list[i])
         this_search.jobs.add(this_job)
@@ -260,7 +266,7 @@ def company_info(request, id):
                 not_in = False
         if not_in == True:
             jobs.append(job)
-    searches = this_company.searches.all()
+    searches = this_company.searches.all().order_by("-created_at")
     contacts = this_company.contacts.all()
     context = {
         "this_company" : this_company,
@@ -289,7 +295,7 @@ def edit_company_info(request, id):
                 not_in = False
         if not_in == True:
             jobs.append(job)
-    searches = this_company.searches.all()
+    searches = this_company.searches.all().order_by("-created_at")
     contacts = this_company.contacts.all()
     context = {
         "this_company" : this_company,

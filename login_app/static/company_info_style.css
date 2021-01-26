@@ -15,5 +15,10 @@ header {
 main {
     width: 80%;
     margin: auto;
-    margin-top: 10%;
+    margin-top: 3%;
 }
+.scrolltable {
+    height: 400px;
+    overflow-y: scroll;
+}
+

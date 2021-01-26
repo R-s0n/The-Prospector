@@ -55,77 +55,77 @@
                 <div class="col-5">
                     <h1 class="text-primary">{{ this_company.name }}</h1>
                 </div>
-                <div class="col-3">
+                <div class="col-3 mt-3">
                     {% if this_company.indeed_link != "/" and this_company.indeed_link != "#" %} <a href="https://www.indeed.com{{ this_company.indeed_link }}" target="_blank">Indeed</a> |{% endif %}
                     <a href={{ this_company.dnb_link }} target="_blank">DnB</a> |
                     <a href={{ this_company.glassdoor_link }} target="_blank">Glassdoor</a> |
                     <a href={{ this_company.google_link }} target="_blank">Google</a>
                 </div>
                 <div class="col-2">
-                        <button type="submit" class="btn btn-primary" onclick="window.location.href='/company/{{this_company.id}}/edit'">Edit Company Info</button>
+                        <button type="submit" class="btn btn-primary mt-2" onclick="window.location.href='/company/{{this_company.id}}/edit'">Edit Company Info</button>
                 </div>
                 <div class="col-2">
-                    <button type="submit" class="btn btn-primary" onclick="window.location.href='/company/{{this_company.id}}/addcontact'">Add Contact</button>
+                    <button type="submit" class="btn btn-primary mt-2" onclick="window.location.href='/company/{{this_company.id}}/addcontact'">Add Contact</button>
             </div>
             </div>
-            <div class="row">
+            <div class="row mt-5">
                 <div class="col-3">
                     <h5>Headquarters: {{ this_company.headquarters }}</h5>
                     {% if this_company.headquarters != "Unknown" %}
-                    <p>Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
                     {% endif %}
                 </div>
                 <div class="col-3">
                     <h5>Revenue: {{ this_company.revenue }}</h5>
                     {% if this_company.revenue != "Unknown" %}
-                    <p>Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
                     {% endif %}
                 </div>
                 <div class="col-3">
                     <h5>Size: {{ this_company.size }}</h5>
                     {% if this_company.size != "Unknown" %}
-                    <p>Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
                     {% endif %}
                 </div>
                 <div class="col-3">
                     <h5>Industry: {{ this_company.industry }}</h5>
                     {% if this_company.industry != "Unknown" %}
-                    <p>Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.last_edited_on }}</h6>
                     {% endif %}
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-6">
+        <div class="row mt-4">
+            <div class="col-6 scrolltable">
                 <h6>Jobs Posted:</h6>
                 <table class="table-striped table-hover w-100">
                     <tr>
                         <th>Title</th>
-                        <th>Description</th>
                         <th>Date Posted</th>
                     </tr>
                     {% for job in jobs %}
                         <tr>
                             <td>{{ job.title }}</td>
-                            <td>{{ job.desc_short }}</td>
                             <td>{{ job.date_posted }}</td>
                         </tr>
                     {% endfor %}
                 </table>
             </div>
-            <div class="col-6">
+            <div class="col-6 scrolltable">
                 <h6>Searches:</h6>
                 <table class="table-striped table-hover w-100">
                     <tr>
                         <th>Service</th>
                         <th>Location</th>
                         <th>User</th>
+                        <th>Search Date</th>
                     </tr>
                     {% for search in searches %}
                         <tr>
                             <td>{{ search.service }}</td>
                             <td>{{ search.city }}, {{ search.state }}</td>
                             <td>{{ search.user.first_name }}</td>
+                            <td>{{ search.created_at }}</td>
                         </tr>
                     {% endfor %}
                 </table>

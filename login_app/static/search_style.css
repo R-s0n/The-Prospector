@@ -17,3 +17,14 @@ main {
     margin: auto;
     margin-top: 10%;
 }
+.errors {
+    list-style-type: none;
+    font-size: 14px;
+    color: red;
+}
+.form-search {
+    width: 100%;
+    max-width: 375px;
+    padding: 20px;
+    margin: auto;
+}

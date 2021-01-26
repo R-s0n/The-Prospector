@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'edit_company_info_style.css' %}">
+        <link rel="stylesheet" href="{% static 'company_info_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
         <title>Search Results</title>
     </head>
@@ -55,7 +55,7 @@
                 <div class="col-6">
                     <h1 class="text-primary">{{ this_company.name }}</h1>
                 </div>
-                <div class="col-3">
+                <div class="col-3 mt-4">
                     {% if this_company.indeed_link != "/" and this_company.indeed_link != "#" %} <a href="https://www.indeed.com{{ this_company.indeed_link }}" target="_blank">Indeed</a> |{% endif %}
                     <a href={{ this_company.dnb_link }} target="_blank">DnB</a> |
                     <a href={{ this_company.glassdoor_link }} target="_blank">Glassdoor</a> |
@@ -64,45 +64,45 @@
                 <div class="col-3">
                 </div>
             </div>
-            <form class="row" action="/processeditcompany" method="POST">
+            <form class="row mt-4" action="/processeditcompany" method="POST">
                 {% csrf_token %}
                 <div class="col-3">
-                    <label for="company_hq" class="form-label">Headquarters:</label>
+                    <label for="company_hq" class="form-label"><h5>Headquarters:</h5></label>
                     <input type="text" class="form-control" id="company_hq" placeholder="{{ this_company.headquarters }}" name="headquarters">
                     {% if this_company.headquarters != "Unknown" %}
-                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
                     {% endif %}
                 </div>
                 <div class="col-3">
-                    <label for="company_rev" class="form-label">Revenue:</label>
+                    <label for="company_rev" class="form-label"><h5>Revenue:</h5></label>
                     <input type="text" class="form-control" id="company_rev" placeholder="{{ this_company.revenue }}" name="revenue">
                     {% if this_company.revenue != "Unknown" %}
-                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
                     {% endif %}
                 </div>
                 <div class="col-3">
-                    <label for="company_size" class="form-label">Size:</label>
+                    <label for="company_size" class="form-label"><h5>Size:</h5></label>
                     <input type="text" class="form-control" id="company_size" placeholder="{{ this_company.size }}" name="size">
                     {% if this_company.size != "Unknown" %}
-                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
                     {% endif %}
                 </div>
                 <div class="col-3">
-                    <label for="company_ind" class="form-label">Industry:</label>
+                    <label for="company_ind" class="form-label"><h5>Industry:</h5></label>
                     <input type="text" class="form-control" id="company_ind" placeholder="{{ this_company.industry }}" name="industry">
                     {% if this_company.industry != "Unknown" %}
-                    <h6>Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
+                    <p class="text-secondary">Last edited by {{ this_company.last_edited_by }} on {{ this_company.updated_at }}</h6>
                     {% endif %}
                 </div>
                 <input type="hidden" value="{{ this_company.id }}" name="company_id">
-                <div class="col-11 mt-3"></div>
-                <div class="col-1 mt-3">
+                <div class="col-11"></div>
+                <div class="col-1 mt-2">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>
         <div class="row">
-            <div class="col-6">
+            <div class="col-6 scrolltable">
                 <h6>Jobs Posted:</h6>
                 <table class="table-striped table-hover w-100">
                     <tr>
@@ -119,19 +119,21 @@
                     {% endfor %}
                 </table>
             </div>
-            <div class="col-6">
+            <div class="col-6 scrolltable">
                 <h6>Searches:</h6>
                 <table class="table-striped table-hover w-100">
                     <tr>
                         <th>Service</th>
                         <th>Location</th>
                         <th>User</th>
+                        <th>Search Date</th>
                     </tr>
                     {% for search in searches %}
                         <tr>
                             <td>{{ search.service }}</td>
                             <td>{{ search.city }}, {{ search.state }}</td>
                             <td>{{ search.user.first_name }}</td>
+                            <td>{{ search.created_at }}</td>
                         </tr>
                     {% endfor %}
                 </table>
