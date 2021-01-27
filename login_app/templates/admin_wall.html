@@ -5,9 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'add_contact_style.css' %}">
+        <link rel="stylesheet" href="{% static 'admin_wall_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Add Contact</title>
+        <title>Admin Wall</title>
     </head>
 <body>
     <header>
@@ -50,35 +50,36 @@
         </div>
     </header>
     <main>
-        
-        <h3 class="text-secondary">Add Contact - <span class="text-primary">{{ this_company.name }}</span></h3>
-        <form class="form" action="/processaddcontact" method="POST">
-            {% csrf_token %}
-            <label for="fname" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="fname" name="fname">
-            <label for="lname" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lname" name="lname">
-            <label for="email" class="form-label">Email Address</label>
-            <input type="text" class="form-control" id="email" name="email">
-            <label for="linked_in" class="form-label">Linked In</label>
-            <input type="text" class="form-control" id="linked_in" name="linked_in">
-            <label for="department" class="form-label">Department</label>
-            <input type="text" class="form-control" id="department" name="department">
-            <label for="position" class="form-label">Job Title</label>
-            <input type="text" class="form-control" id="position" name="position">
-            <label for="notes" class="form-label">Additional Notes</label>
-            <textarea class="form-control" name="notes" id="notes"rows="5"></textarea>
-            <input type="hidden" name="company_id" value="{{ this_company.id }}">
-            <div id="errors">
-                {% if messages %}
-                        {% for message in messages %}
-                            <p class="errors">{{ message }}</li>
-                        {% endfor %}
-                {% endif %}
-            </div>
-            <p class="text-secondary mt-3">Empty fields will be left empty</p>
-            <button type="submit" class="btn btn-primary">Add Contact</button>
-        </form>
+        <div class="container-fluid">
+            <div class="row searchtablescroll">
+                <div class="col-12">
+                    <h5>All Notes:</h5>
+                    {% for note in notes %}
+                        <h6 class="text-secondary mt-3 ml-2">Note posted by <span class="text-primary">{{ note.user.first_name }}</span> for <a href="/company/{{note.company.id}}">{{ note.company.name }}</a> on <span class="text-primary">{{ note.created_at }}</span>:</h6>
+                        <p class="ml-5">{{ note.content }}</p>
+                        <div class="ml-5">
+                            {% for comment in note.comments.all %}
+                                <h6 class="text-secondary mt-3 ml-2">Comment posted by <span class="text-primary">{{ comment.user.first_name }}</span> on <span class="text-primary">{{ comment.created_at }}</span>:</h6>
+                                <p class="ml-5">{{ comment.content }}</p>
+                            {% endfor %}
+                        </div>
+                        <form class="mb-5" action="/processcomment" method="POST">
+                            {% csrf_token %}
+                            <label for="note-form" class="form-label">Comment on {{ note.user.first_name }}'s note:</label>
+                            <textarea class="form-control" id="note-form" rows="2" name="content"></textarea>
+                            <input type="hidden" name="note_id" value="{{ note.id }}">
+                            <div id="errors">
+                                {% if messages and request.session.noteid == note.id%}
+                                        {% for message in messages %}
+                                            <p class="errors">{{ message }}</p>
+                                        {% endfor %}
+                                {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Add Comment</button>
+                        </form>
+                    {% endfor %}
+                </div>
+        </div>
     </main>
     <footer>
         <div class="container-fluid">

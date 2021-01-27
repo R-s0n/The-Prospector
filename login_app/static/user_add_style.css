@@ -1,7 +1,8 @@
 main {
     width: 80%;
     margin: auto;
-    margin-top: 10%;
+    margin-top: 3%;
+    min-height: 835px;
 }
 .form-login {
     width: 100%;
@@ -33,4 +34,11 @@ header {
     height: 80px;
     background-color: #f4f4f4;
     border-bottom: 2px groove #0088ff;
+}
+footer {
+    height: 35px;
+    background-color: #f4f4f4;
+    border-top: 2px ridge #0088ff;
+    vertical-align: middle;
+    text-align: center;
 }

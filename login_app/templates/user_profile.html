@@ -25,14 +25,14 @@
                             <a class="nav-link" href="/search">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">History</a>
+                            <a class="nav-link" href="/search/history">History</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Favorites</a>
+                            <a class="nav-link" href="/watchlist">Watchlist</a>
                         </li>
                         {% if logged_user.admin == True %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Comments</a>
+                                <a class="nav-link" href="/admin/wall">Comments</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
@@ -52,13 +52,16 @@
     <main>
         <div class="container-fluid">
             <div class="row mt-5">
-                <div class="col-9">
-                    <h2>{{ this_user.first_name }} {{ this_user.last_name }}</h2>
-                    <h4>User ID: {{ this_user.id }}</h4>
-                    <h4>Email: {{ this_user.email }}</h4>
-                    <h4>Privileges: {% if this_user.admin == True %}Administrator{% endif %}{% if this_user.admin == False %}User{% endif %}</h4>
-                    <h5>Registered On: {{ this_user.created_at }}</h5>
-                    <h5>Last Login: {{ this_user.last_login }}</h5>
+                <div class="col-9 pl-5">
+                    <h2 class="display-4 text-primary" style="font-weight: lighter;">{{ this_user.first_name }} {{ this_user.last_name }}</h2>
+                    <p class="text-secondary mt-4">User ID: {{ this_user.id }}</h4>
+                    <p class="text-secondary">Email: {{ this_user.email }}</h4>
+                    <p class="text-secondary">Privileges: {% if this_user.admin == True %}Administrator{% endif %}{% if this_user.admin == False %}User{% endif %}</h4>
+                    <p class="text-secondary">Registered On: {{ this_user.created_at }}</h5>
+                    <p class="text-secondary">Last Login: {{ this_user.last_login }}</h5>
+                    <p class="text-secondary">Total Searches: {{ this_user.searches.all|length }}</h5>
+                    <p class="text-secondary">Total Companies Watchlisted: {{ this_user.watchlisted_companies.all|length }}</h5>
+                    <p class="text-secondary">Total Notes: {{ this_user.notes.all|length }}</h5>
                 </div>
                 <div class="col-1">
                     {% if logged_user.admin == True or this_user.id == logged_user.id %}
@@ -71,5 +74,14 @@
             </div>
         </div>
     </main>
+    <footer>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-12">
+                    <p class="text-secondary m-0">The Prospector is a FREE, open-source tool developed by <a href="https://www.linkedin.com/in/harrison-richardson-cissp-7a55bb158/" target="_blank">R-s0n</a>.  Source code can be downloaded from the GitHub repository <a href="#"  target="_blank">here</a>, and an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html"  target="_blank">Amazon Machine Image (AMI)</a> can be downloaded <a href="#"  target="_blank">here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

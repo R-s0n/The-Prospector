@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils import timezone
-from .models import User, Search, Company, Job, Contact
+from .models import User, Search, Company, Job, Contact, Note, Comment
 import bcrypt, datetime, requests
 from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
+import numpy as np
+import io
+import urllib, base64
+
+
 
 def index(request):
     if 'userid' in request.session:
@@ -15,8 +21,27 @@ def index(request):
 def home(request):
     if 'userid' in request.session:
         logged_user = User.objects.get(id=request.session['userid'])
+        if logged_user.first_login == True:
+            return redirect("/about")
+        searches = []
+        counter = 0
+        for search in logged_user.searches.all().order_by("-created_at"):
+            if counter == 10:
+                break
+            searches.append(search)
+            counter += 1
+        companies_watchlisted = []
+        counter = 0
+        for company in logged_user.watchlisted_companies.all().order_by("updated_at"):
+            if counter == 10:
+                break
+            companies_watchlisted.append(company)
+            counter += 1
         context ={
-            "logged_user" : logged_user
+            "logged_user" : logged_user,
+            "searches" : searches,
+            "companies_watchlisted" : companies_watchlisted,
+            "notes" : logged_user.notes.all().order_by("-created_at")
         }
         return render(request, "home.html", context)
     return redirect("/")
@@ -72,9 +97,11 @@ def users(request):
 def user_profile(request, id):
     if 'userid' not in request.session:
         return redirect("/")
-    User.objects.filter(id=int(id))
+    this_user = User.objects.filter(id=int(id)).first()
+    if not this_user:
+        return redirect("/notfound")
     context = {
-        "this_user" : User.objects.filter(id=int(id)).first(),
+        "this_user" : this_user,
         "logged_user" : User.objects.get(id=request.session['userid'])
     }
     return render(request, "user_profile.html", context)
@@ -84,6 +111,8 @@ def user_edit(request, id):
         return redirect("/")
     logged_user = User.objects.filter(id=request.session['userid']).first()
     this_user = User.objects.filter(id=int(id)).first()
+    if not this_user:
+        return redirect("/notfound")
     if logged_user.admin != True and logged_user.id != this_user.id:
         return redirect("/home")
     context = {
@@ -255,7 +284,7 @@ def company_info(request, id):
     if 'userid' not in request.session:
         return redirect("/")
     if not Company.objects.filter(id=id).first():
-        return redirect("/companynotfound")
+        return redirect("/notfound")
     this_company = Company.objects.filter(id=id).first()
     company_jobs = this_company.jobs.all()
     jobs = []
@@ -268,24 +297,34 @@ def company_info(request, id):
             jobs.append(job)
     searches = this_company.searches.all().order_by("-created_at")
     contacts = this_company.contacts.all()
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    watchlisted = logged_user.watchlisted_companies.all()
+    if this_company in watchlisted:
+        is_watchlisted = True
+    else:
+        is_watchlisted = False
     context = {
         "this_company" : this_company,
-        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
+        "logged_user" : logged_user,
         "jobs" : jobs,
         "searches" : searches,
-        "contacts" : contacts
+        "contacts" : contacts,
+        "notes" : this_company.notes.all().order_by("-created_at"),
+        "is_watchlisted" : is_watchlisted
     }
     return render(request, "company_info.html", context)
 
-def company_not_found(request):
+def not_found(request):
     if 'userid' not in request.session:
         return redirect("/")
-    return render(request, "company_not_found.html")
+    return render(request, "not_found.html")
 
 def edit_company_info(request, id):
     if 'userid' not in request.session:
         return redirect("/")
     this_company = Company.objects.filter(id=id).first()
+    if not this_company:
+        return redirect("/notfound")
     company_jobs = this_company.jobs.all()
     jobs = []
     for job in company_jobs:
@@ -302,7 +341,8 @@ def edit_company_info(request, id):
         "logged_user" : User.objects.filter(id=request.session['userid']).first(),
         "jobs" : jobs,
         "searches" : searches,
-        "contacts" : contacts
+        "contacts" : contacts,
+        "notes" : this_company.notes.all().order_by("-created_at")
     }
     return render(request, "edit_company_info.html", context)
 
@@ -327,6 +367,8 @@ def process_edit_company(request):
 def add_contact(request, id):
     if 'userid' not in request.session:
         return redirect("/")
+    if not Company.objects.filter(id=id).first():
+        return redirect("/notfound")
     context = {
         "logged_user" : User.objects.filter(id=request.session['userid']).first(),
         "this_company" : Company.objects.filter(id=id).first
@@ -338,3 +380,125 @@ def process_add_contact(request):
         return redirect("/")
     Contact.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], linked_in=request.POST['linked_in'], department=request.POST['department'], position=request.POST['position'], notes=request.POST['notes'], company=Company.objects.filter(id=request.POST['company_id']).first())
     return redirect(f"/company/{request.POST['company_id']}")
+
+def search_history(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    context = {
+        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
+        "searches" : Search.objects.all().order_by("-created_at")
+    }
+    return render(request, "search_history.html", context)
+
+def view_search(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    this_search = Search.objects.filter(id=id).first()
+    if not this_search:
+        return redirect("/notfound")
+    context = {
+        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
+        "this_search" : this_search,
+        "jobs" : this_search.jobs.all()
+    }
+    return render(request, "view_search.html", context)
+
+def process_note(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    this_company = Company.objects.filter(id=request.POST['company_id']).first()
+    errors = Note.objects.note_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect(f"/company/{this_company.id}")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    Note.objects.create(content=request.POST['content'], user=logged_user, company=this_company)
+    return redirect(f"/company/{this_company.id}")
+
+def admin_wall(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    if logged_user.admin != True:
+        return redirect("/")
+    context = {
+        "notes" : Note.objects.all().order_by("-created_at"),
+        "logged_user" : logged_user
+    }
+    return render(request, "admin_wall.html", context)
+
+def process_comment(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    if logged_user.admin != True:
+        return redirect("/")
+    errors = Comment.objects.comment_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        request.session['noteid'] = int(request.POST['note_id'])
+        return redirect(f"/admin/wall")
+    this_note = Note.objects.filter(id=request.POST['note_id']).first()
+    Comment.objects.create(content=request.POST['content'], user=logged_user, note=this_note)
+    return redirect("/admin/wall")
+
+def process_watchlist(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    this_user = User.objects.filter(id=request.session['userid']).first()
+    this_company = Company.objects.filter(id=id).first()
+    this_company.users_who_watchlisted.add(this_user)
+    return redirect(f"/company/{id}")
+
+def watchlist(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    context = {
+        "logged_user" : logged_user,
+        "watchlisted_companies" : logged_user.watchlisted_companies.all()
+    }
+    return render(request, "watchlist.html", context)
+
+def edit_contact(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    context = {
+        "this_contact" : Contact.objects.filter(id=id).first(),
+        "logged_user" : User.objects.filter(id=request.session['userid']).first()
+    }
+    return render(request, "edit_contact.html", context)
+
+def process_edit_contact(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    contact = Contact.objects.filter(id=request.POST['contact_id']).first()
+    contact.first_name = request.POST['fname']
+    contact.last_name = request.POST['lname']
+    contact.email = request.POST['email']
+    contact.linked_in = request.POST['linked_in']
+    contact.department = request.POST['department']
+    contact.position = request.POST['position']
+    contact.notes = request.POST['notes']
+    contact.save()
+    return redirect(f"/company/{contact.company.id}")
+
+def delete_contact(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    contact = Contact.objects.filter(id=id).first()
+    contact.delete()
+    return redirect(f"/company/{contact.company.id}")
+
+def about(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    logged_user.first_login = False
+    logged_user.save()
+    context = {
+        "logged_user" : logged_user
+    }
+    return render(request, "about.html", context)

@@ -6,6 +6,7 @@ img {
     transform: translate(0px, -60px);
     position: relative;
     object-fit: cover;
+    z-index: 0;
 }
 header {
     height: 80px;
@@ -14,9 +15,9 @@ header {
 }
 main {
     width: 80%;
-    min-height: 875px;
     margin: auto;
-    margin-top: 1%;
+    margin-top: 3%;
+    min-height: 835px;
 }
 footer {
     height: 35px;
@@ -24,7 +25,4 @@ footer {
     border-top: 2px ridge #0088ff;
     vertical-align: middle;
     text-align: center;
-}
-table {
-    max-height: 350px;
 }

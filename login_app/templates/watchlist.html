@@ -5,9 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'add_contact_style.css' %}">
+        <link rel="stylesheet" href="{% static 'search_history_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Add Contact</title>
+        <title>Search History</title>
     </head>
 <body>
     <header>
@@ -28,7 +28,7 @@
                             <a class="nav-link" href="/search/history">History</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/watchlist">Watchlist</a>
+                            <a class="nav-link" href="#">Watchlist</a>
                         </li>
                         {% if logged_user.admin == True %}
                             <li class="nav-item">
@@ -50,35 +50,27 @@
         </div>
     </header>
     <main>
-        
-        <h3 class="text-secondary">Add Contact - <span class="text-primary">{{ this_company.name }}</span></h3>
-        <form class="form" action="/processaddcontact" method="POST">
-            {% csrf_token %}
-            <label for="fname" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="fname" name="fname">
-            <label for="lname" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lname" name="lname">
-            <label for="email" class="form-label">Email Address</label>
-            <input type="text" class="form-control" id="email" name="email">
-            <label for="linked_in" class="form-label">Linked In</label>
-            <input type="text" class="form-control" id="linked_in" name="linked_in">
-            <label for="department" class="form-label">Department</label>
-            <input type="text" class="form-control" id="department" name="department">
-            <label for="position" class="form-label">Job Title</label>
-            <input type="text" class="form-control" id="position" name="position">
-            <label for="notes" class="form-label">Additional Notes</label>
-            <textarea class="form-control" name="notes" id="notes"rows="5"></textarea>
-            <input type="hidden" name="company_id" value="{{ this_company.id }}">
-            <div id="errors">
-                {% if messages %}
-                        {% for message in messages %}
-                            <p class="errors">{{ message }}</li>
-                        {% endfor %}
-                {% endif %}
-            </div>
-            <p class="text-secondary mt-3">Empty fields will be left empty</p>
-            <button type="submit" class="btn btn-primary">Add Contact</button>
-        </form>
+        <h3 class="text-primary">Watchlist</h3>
+        <div class="searchtablescroll">
+            <table class="table-striped table-hover w-100">
+                <tr>
+                    <th>Company</th>
+                    <th>Size</th>
+                    <th>Headquarters</th>
+                    <th>Revenue</th>
+                    <th>Industry</th>
+                </tr>
+                {% for company in watchlisted_companies %}
+                    <tr>
+                        <td><a href="/company/{{ company.id }}">{{ company.name }}</a></td>
+                        <td>{{ company.size }}</td>
+                        <td>{{ company.headquarters }}</td>
+                        <td>{{ company.revenue }}</td>
+                        <td>{{ company.industry }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </main>
     <footer>
         <div class="container-fluid">

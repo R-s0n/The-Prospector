@@ -84,6 +84,20 @@ class SearchManager(models.Manager):
             errors["radius"] = "How did you pull this off?  Burp Suite??"
         return errors
 
+class NoteManager(models.Manager):
+    def note_validator(self, postData):
+        errors = {}
+        if len(postData['content']) < 1:
+            errors["content"] = "You cannot add a blank note."
+        return errors
+
+class CommentManager(models.Manager):
+    def comment_validator(self, postData):
+        errors = {}
+        if len(postData['content']) < 1:
+            errors["content"] = "You cannot add a blank comment."
+        return errors
+
 class User(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -91,6 +105,7 @@ class User(models.Model):
     password = models.CharField(max_length=255)
     admin = models.BooleanField(default=False)
     last_login = models.DateTimeField()
+    first_login = models.BooleanField(default="True")
 
     objects = UserManager()
 
@@ -126,6 +141,7 @@ class Company(models.Model):
     google_link = models.CharField(max_length=255, default="/")
 
     searches = models.ManyToManyField(Search, related_name="companies")
+    users_who_watchlisted = models.ManyToManyField(User, related_name="watchlisted_companies")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -145,18 +161,39 @@ class Job(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class Contact(models.Model):
-    first_name = models.CharField(max_length=255, default="")
-    last_name = models.CharField(max_length=255, default="")
-    email = models.CharField(max_length=255, default="")
-    linked_in = models.CharField(max_length=255, default="")
-    department = models.CharField(max_length=255, default="")
-    position = models.CharField(max_length=255, default="")
-    notes = models.TextField(default="")
+    first_name = models.CharField(max_length=255, default="Unknown")
+    last_name = models.CharField(max_length=255, default="Unknown")
+    email = models.CharField(max_length=255, default="Unknown")
+    linked_in = models.CharField(max_length=255, default="Unknown")
+    department = models.CharField(max_length=255, default="Unknown")
+    position = models.CharField(max_length=255, default="Unknown")
+    notes = models.TextField(default="None")
 
     company = models.ForeignKey(Company, related_name="contacts", on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class Note(models.Model):
+    content = models.TextField(default="")
+
+    user = models.ForeignKey(User, related_name="notes", on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, related_name="notes", on_delete=models.CASCADE)
+
+    objects = NoteManager()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Comment(models.Model):
+    content = models.TextField(default="")
+
+    user = models.ForeignKey(User, related_name="comments", on_delete=models.CASCADE)
+    note = models.ForeignKey(Note, related_name="comments", on_delete=models.CASCADE)
+
+    objects = CommentManager()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 

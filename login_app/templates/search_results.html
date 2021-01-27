@@ -26,14 +26,14 @@
                             <a class="nav-link" href="/search">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">History</a>
+                            <a class="nav-link" href="/search/history">History</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Favorites</a>
+                            <a class="nav-link" href="/watchlist">Watchlist</a>
                         </li>
                         {% if logged_user.admin == True %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Comments</a>
+                                <a class="nav-link" href="/admin/wall">Comments</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
@@ -52,26 +52,37 @@
     </header>
     <main>
         <h3 class="text-primary">Search For {{ this_search.service }} - {{ this_search.city }}, {{ this_search.state }}</h3>
-        <table class="table-striped table-hover w-100">
-            <tr>
-                <th>Job Title</th>
-                <th>Company</th>
-                <th>Annual Revenue</th>
-                <th>Headquarters</th>
-                <th>Size</th>
-                <th>Date Posted</th>
-            </tr>
-            {% for job in jobs %}
+        <div class="searchtablescroll">
+            <table class="table-striped table-hover w-100">
                 <tr>
-                    <td>{{ job.title }}</td>
-                    <td><a href="/company/{{ job.company.id }}">{{ job.company.name }}</a></td>
-                    <td>{{ job.company.revenue }}</td>
-                    <td>{{ job.company.headquarters }}</td>
-                    <td>{{ job.company.size }}</td>
-                    <td>{{ job.date_posted }}</td>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Annual Revenue</th>
+                    <th>Headquarters</th>
+                    <th>Size</th>
+                    <th>Date Posted</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for job in jobs %}
+                    <tr>
+                        <td>{{ job.title }}</td>
+                        <td><a href="/company/{{ job.company.id }}">{{ job.company.name }}</a></td>
+                        <td>{{ job.company.revenue }}</td>
+                        <td>{{ job.company.headquarters }}</td>
+                        <td>{{ job.company.size }}</td>
+                        <td>{{ job.date_posted }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </main>
+    <footer>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-12">
+                    <p class="text-secondary m-0">The Prospector is a FREE, open-source tool developed by <a href="https://www.linkedin.com/in/harrison-richardson-cissp-7a55bb158/" target="_blank">R-s0n</a>.  Source code can be downloaded from the GitHub repository <a href="#"  target="_blank">here</a>, and an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html"  target="_blank">Amazon Machine Image (AMI)</a> can be downloaded <a href="#"  target="_blank">here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

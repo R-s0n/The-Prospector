@@ -15,5 +15,20 @@ header {
 main {
     width: 80%;
     margin: auto;
-    margin-top: 10%;
+    margin-top: 3%;
+    min-height: 835px;
+}
+th, td {
+    max-width: 500px;
+}
+.searchtablescroll {
+    max-height: 750px;
+    overflow-y: scroll;
+}
+footer {
+    height: 35px;
+    background-color: #f4f4f4;
+    border-top: 2px ridge #0088ff;
+    vertical-align: middle;
+    text-align: center;
 }

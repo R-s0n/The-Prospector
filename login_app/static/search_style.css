@@ -16,6 +16,14 @@ main {
     width: 80%;
     margin: auto;
     margin-top: 10%;
+    min-height: 705px;
+}
+footer {
+    height: 35px;
+    background-color: #f4f4f4;
+    border-top: 2px ridge #0088ff;
+    vertical-align: middle;
+    text-align: center;
 }
 .errors {
     list-style-type: none;

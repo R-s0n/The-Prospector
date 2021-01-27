@@ -16,9 +16,25 @@ main {
     width: 80%;
     margin: auto;
     margin-top: 3%;
+    min-height: 835px;
 }
 .scrolltable {
     height: 400px;
     overflow-y: scroll;
 }
-
+.scrollnotes {
+    height: 200px;
+    overflow-y: scroll;
+}
+.errors {
+    list-style-type: none;
+    font-size: 14px;
+    color: red;
+}
+footer {
+    height: 35px;
+    background-color: #f4f4f4;
+    border-top: 2px ridge #0088ff;
+    vertical-align: middle;
+    text-align: center;
+}

@@ -25,14 +25,14 @@
                             <a class="nav-link" href="/search">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">History</a>
+                            <a class="nav-link" href="/search/history">History</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Favorites</a>
+                            <a class="nav-link" href="/watchlist">Watchlist</a>
                         </li>
                         {% if logged_user.admin == True %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Comments</a>
+                                <a class="nav-link" href="/admin/wall">Comments</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
@@ -50,7 +50,90 @@
         </div>
     </header>
     <main>
-        Welcome Home!
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-8">
+                    <p class="text-primary" style="font-size: 24px">The Prospector<span class="text-secondary"> - Dashboard</span></p>
+                </div>
+                <div class="col-4">
+                    <p class="text-secondary" style="font-size: 24px; text-align: right;">Current Privileges<span class="text-primary"> - {% if logged_user.admin == True %}Administrator{% else %}Standard User{% endif %}</span></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p class="text-primary" style="font-size: 18px">Recent Searches:</p>
+                    <table class="table-striped table-hover w-100">
+                        <tr>
+                            <th>Service</th>
+                            <th>Location</th>
+                            <th>Radius</th>
+                            <th>Date</th>
+                            <th>Results</th>
+                        </tr>
+                        {% for search in searches %}
+                            <tr>
+                                <td><a href="/search/{{ search.id }}">{{ search.service }}</a></td>
+                                <td>{{ search.city }}, {{ search.state }}</td>
+                                <td>{{ search.radius }}</td>
+                                <td>{{ search.created_at }}</td>
+                                <td>{{ search.jobs.all|length }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="col-6">
+                    <p class="text-primary" style="font-size: 18px">Top Companies Watchlisted:</p>
+                    <table class="table-striped table-hover w-100">
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Revenue</th>
+                            <th>Headquarters</th>
+                            <th>Industry</th>
+                        </tr>
+                        {% for company in companies_watchlisted %}
+                            <tr>
+                                <td><a href="/company/{{ company.id }}">{{ company.name }}</a></td>
+                                <td>{{ company.size }}</td>
+                                <td>{{ company.revenue }}</td>
+                                <td>{{ company.headquarters }}</td>
+                                <td>{{ company.industry }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 mt-4"  style="max-height:370px; overflow-y: scroll;">
+                    <p class="text-primary" style="font-size: 18px">Recent Notes:</p>
+                    <table class="table-striped table-hover w-100">
+                        <tr>
+                            <th>Company</th>
+                            <th>Note</th>
+                            <th>Date Posted</th>
+                            <th>Manager Comments</th>
+                        </tr>
+                        {% for note in notes %}
+                            <tr>
+                                <td><a href="/company/{{ note.company.id }}">{{ note.company.name }}</a></td>
+                                <td style="max-width:700px">{{ note.content }}</td>
+                                <td style="text-align: center;">{{ note.created_at }}</td>
+                                <td style="text-align: center;">{{ note.comments.all|length }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
+    <footer>
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-12">
+                    <p class="text-secondary m-0">The Prospector is a FREE, open-source tool developed by <a href="https://www.linkedin.com/in/harrison-richardson-cissp-7a55bb158/" target="_blank">R-s0n</a>.  Source code can be downloaded from the GitHub repository <a href="#"  target="_blank">here</a>, and an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html"  target="_blank">Amazon Machine Image (AMI)</a> can be downloaded <a href="#"  target="_blank">here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

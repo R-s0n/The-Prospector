@@ -25,14 +25,14 @@
                             <a class="nav-link" href="/search">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">History</a>
+                            <a class="nav-link" href="/search/history">History</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Favorites</a>
+                            <a class="nav-link" href="/watchlist">Watchlist</a>
                         </li>
                         {% if logged_user.admin == True %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Comments</a>
+                                <a class="nav-link" href="/admin/wall">Comments</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
@@ -51,22 +51,29 @@
     </header>
     <main>
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-5">
+            <div class="row align-items-center">
+                <div class="col-3">
                     <h1 class="text-primary">{{ this_company.name }}</h1>
                 </div>
-                <div class="col-3 mt-3">
+                <div class="col-3">
                     {% if this_company.indeed_link != "/" and this_company.indeed_link != "#" %} <a href="https://www.indeed.com{{ this_company.indeed_link }}" target="_blank">Indeed</a> |{% endif %}
                     <a href={{ this_company.dnb_link }} target="_blank">DnB</a> |
                     <a href={{ this_company.glassdoor_link }} target="_blank">Glassdoor</a> |
                     <a href={{ this_company.google_link }} target="_blank">Google</a>
                 </div>
                 <div class="col-2">
+                    {% if is_watchlisted == False %}
+                        <button style="width: 150px" type="submit" class="btn btn-primary mt-2" onclick="window.location.href='/company/{{this_company.id}}/watchlist'">Add To Watchlist</button>
+                    {% else %}
+                        <button style="width: 150px" type="submit" class="btn btn-primary mt-2" disabled>Watchlisted</button>
+                    {% endif %}
+                </div>
+                <div class="col-2">
                         <button type="submit" class="btn btn-primary mt-2" onclick="window.location.href='/company/{{this_company.id}}/edit'">Edit Company Info</button>
                 </div>
                 <div class="col-2">
                     <button type="submit" class="btn btn-primary mt-2" onclick="window.location.href='/company/{{this_company.id}}/addcontact'">Add Contact</button>
-            </div>
+                </div>
             </div>
             <div class="row mt-5">
                 <div class="col-3">
@@ -122,7 +129,7 @@
                     </tr>
                     {% for search in searches %}
                         <tr>
-                            <td>{{ search.service }}</td>
+                            <td><a href="/search/{{ search.id }}">{{ search.service }}</a></td>
                             <td>{{ search.city }}, {{ search.state }}</td>
                             <td>{{ search.user.first_name }}</td>
                             <td>{{ search.created_at }}</td>
@@ -142,6 +149,7 @@
                         <th>Department</th>
                         <th>Job Title</th>
                         <th>Notes</th>
+                        <th>Actions</th>
                     </tr>
                     {% for contact in contacts %}
                     <tr>
@@ -151,11 +159,57 @@
                         <td>{{ contact.department }}</td>
                         <td>{{ contact.position }}</td>
                         <td>{{ contact.notes }}</td>
+                        <td><a href="/editcontact/{{ contact.id }}">Edit</a> | <a href="/deletecontact/{{ contact.id }}">Delete</a></td>
                     </tr>
                     {% endfor %}
                 </table>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12 mt-5 scrollnotes">
+                <h5>Notes:</h5>
+                {% if not notes %}
+                    <h6 class="text-secondary">No notes have been added to this company.</h6>
+                {% else %}
+                    {% for note in notes %}
+                    <h6 class="text-primary mt-3 ml-2">Note posted by {{ note.user.first_name }} on {{ note.created_at }}:</h6>
+                    <p class="ml-5">{{ note.content }}</p>
+                    <div class="ml-5">
+                        {% for comment in note.comments.all %}
+                            <h6 class="text-secondary mt-3 ml-2">Comment posted by <span class="text-primary">{{ comment.user.first_name }}</span> on <span class="text-primary">{{ comment.created_at }}</span>:</h6>
+                            <p class="ml-5">{{ comment.content }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-12 mt-5">
+                <form action="/processnote" method="POST">
+                    {% csrf_token %}
+                    <label for="note-form" class="form-label">Add a New Company Note:</label>
+                    <textarea class="form-control" id="note-form" rows="3" name="content"></textarea>
+                    <input type="hidden" name="company_id" value="{{ this_company.id }}">
+                    <div id="errors">
+                        {% if messages %}
+                                {% for message in messages %}
+                                    <p class="errors">{{ message }}</li>
+                                {% endfor %}
+                        {% endif %}
+                    </div>
+                    <p class="text-secondary">*Notes cannot be deleted once added</p>
+                    <button type="submit" class="btn btn-primary">Add Note</button>
+                </form>
+            </div>
+        </div>
     </main>
+    <footer class="mt-5">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-12">
+                    <p class="text-secondary m-0">The Prospector is a FREE, open-source tool developed by <a href="https://www.linkedin.com/in/harrison-richardson-cissp-7a55bb158/" target="_blank">R-s0n</a>.  Source code can be downloaded from the GitHub repository <a href="#"  target="_blank">here</a>, and an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html"  target="_blank">Amazon Machine Image (AMI)</a> can be downloaded <a href="#"  target="_blank">here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

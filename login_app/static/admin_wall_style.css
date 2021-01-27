@@ -14,9 +14,14 @@ header {
 }
 main {
     width: 80%;
-    min-height: 875px;
     margin: auto;
-    margin-top: 1%;
+    margin-top: 3%;
+    min-height: 835px;
+}
+.errors {
+    list-style-type: none;
+    font-size: 14px;
+    color: red;
 }
 footer {
     height: 35px;
@@ -25,6 +30,7 @@ footer {
     vertical-align: middle;
     text-align: center;
 }
-table {
-    max-height: 350px;
+.searchtablescroll {
+    max-height: 750px;
+    overflow-y: scroll;
 }

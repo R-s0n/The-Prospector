@@ -17,4 +17,12 @@ main {
     margin: auto;
     margin-top: 25px;
     margin-top: 3%;
+    min-height: 835px;
+}
+footer {
+    height: 35px;
+    background-color: #f4f4f4;
+    border-top: 2px ridge #0088ff;
+    vertical-align: middle;
+    text-align: center;
 }

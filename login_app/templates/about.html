@@ -5,9 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-        <link rel="stylesheet" href="{% static 'search_style.css' %}">
+        <link rel="stylesheet" href="{% static 'about_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>Search</title>
+        <title>About</title>
     </head>
 <body>
     <header>
@@ -25,11 +25,14 @@
                             <a class="nav-link" href="/search">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Favorites</a>
+                            <a class="nav-link" href="/search/history">History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/watchlist">Watchlist</a>
                         </li>
                         {% if logged_user.admin == True %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Comments</a>
+                                <a class="nav-link" href="/admin/wall">Comments</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
@@ -47,46 +50,16 @@
         </div>
     </header>
     <main>
+        Welcome to the About page!
+    </main>
+    <footer>
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-5">
-                    <h1>Jobs:</h1>
-                    {% for job in job_titles %}
-                        <p>{{ job }}</p>
-                    {% endfor %}
+            <div class="row align-items-center">
+                <div class="col-12">
+                    <p class="text-secondary m-0">The Prospector is a FREE, open-source tool developed by <a href="https://www.linkedin.com/in/harrison-richardson-cissp-7a55bb158/" target="_blank">R-s0n</a>.  Source code can be downloaded from the GitHub repository <a href="#"  target="_blank">here</a>, and an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html"  target="_blank">Amazon Machine Image (AMI)</a> can be downloaded <a href="#"  target="_blank">here</a>.</p>
                 </div>
-                <div class="col-3">
-                    <h1>Companies:</h1>
-                    {% for company in company_titles %}
-                        <p>{{ company }}</p>
-                    {% endfor %}
-                </div>
-                <div class="col-2">
-                    <h1>Links:</h1>
-                    {% for link in indeed_links %}
-                        {% if link != "No Link Available" %}
-                            <p><a href="https://indeed.com{{ link }}">Indeed</a></p>
-                        {% else %}
-                            <p>{{ link }}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="col-2">
-                    <h1>Dates:</h1>
-                    {% for date in date_posted %}
-                        <p>{{ date }}</p>
-                    {% endfor %}
-                </div>
-                <table class="table-striped">
-                    <tr>
-                        <th>Job Title</th>
-                        <th>Company</th>
-                        <th>Date Posted</th>
-                        <th>Links</th>
-                    </tr>
-                </table>
             </div>
         </div>
-    </main>
+    </footer>
 </body>
 </html>
