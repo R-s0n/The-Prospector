@@ -4,10 +4,11 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}"/>
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'login_style.css' %}">
     <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-    <title>Login</title>
+    <title>The Prospector - Login</title>
 </head>
 <body class="d-flex text-center">
     <form class="form-login" action="/login" method="POST">
@@ -21,7 +22,7 @@
             <label for="exampleInputPassword1" class="form-label">Password</label>
             <input type="password" class="form-control" id="exampleInputPassword1" name="passwd">
         </div>
-        <p>Need an account?<a href="/register_form">  Register</a></p>
+        <p>Need an account?<a href="/register/form">  Register</a></p>
         <div id="errors">
             {% if messages %}
                     {% for message in messages %}

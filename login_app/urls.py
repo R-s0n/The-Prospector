@@ -1,13 +1,14 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
+
 
 urlpatterns = [
     path('', views.index),
     path('home', views.home),
     path('register', views.register),
+    path('register/form', views.register_form),
     path('login', views.login),
     path('logout/', views.logout),
-    path('register_form', views.register_form),
     path('users', views.users),
     path('users/<id>', views.user_profile),
     path('users/<id>/edit', views.user_edit),
@@ -20,20 +21,21 @@ urlpatterns = [
     path('search/process', views.search_process),
     path('search/results', views.search_results),
     path('company/<id>', views.company_info),
-    path('notfound', views.not_found),
     path('company/<id>/edit', views.edit_company_info),
-    path('processeditcompany', views.process_edit_company),
     path('company/<id>/addcontact', views.add_contact),
+    path('company/<id>/watchlist', views.process_watchlist),
+    path('notfound', views.not_found),
+    path('processeditcompany', views.process_edit_company),
     path('processaddcontact', views.process_add_contact),
     path('search/history', views.search_history),
     path('search/<id>', views.view_search),
-    path('processnote', views.process_note),
     path('admin/wall', views.admin_wall),
     path('processcomment', views.process_comment),
-    path('company/<id>/watchlist', views.process_watchlist),
+    path('processnote', views.process_note),
     path('watchlist', views.watchlist),
-    path('editcontact/<id>', views.edit_contact),
     path('processeditcontact', views.process_edit_contact),
+    path('editcontact/<id>', views.edit_contact),
     path('deletecontact/<id>', views.delete_contact),
-    path('about', views.about)
+    path('about', views.about),
+    re_path(r'^(?P<path>.*)/$', views.bad_request)
 ]

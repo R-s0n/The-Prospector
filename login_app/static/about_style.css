@@ -26,3 +26,34 @@ footer {
     vertical-align: middle;
     text-align: center;
 }
+#about-photo-1 {
+    border: 2px ridge #0088ff;
+    border-radius: 10px;
+    -moz-transform: translate(0px, 30px);
+    -webkit-transform: translate(0px, 30px);
+    -o-transform: translate(0px, 30px);
+    -ms-transform: translate(0px, 30px);
+    transform: translate(0px, 30px);
+    position: relative;
+}
+#about-photo-2 {
+    border: 2px ridge #0088ff;
+    border-radius: 10px;
+    -moz-transform: translate(0px, 100px);
+    -webkit-transform: translate(0px, 100px);
+    -o-transform: translate(0px, 100px);
+    -ms-transform: translate(0px, 100px);
+    transform: translate(0px, 100px);
+    position: relative;
+}
+#about-photo-3 {
+    border: 2px ridge #0088ff;
+    border-radius: 10px;
+    margin-left: 35px;
+    -moz-transform: translate(0px, 150px);
+    -webkit-transform: translate(0px, 150px);
+    -o-transform: translate(0px, 150px);
+    -ms-transform: translate(0px, 150px);
+    transform: translate(0px, 150px);
+    position: relative;
+}

@@ -4,10 +4,11 @@
         {% load static %}
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}"/>
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
         <link rel="stylesheet" href="{% static 'about_style.css' %}">
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-        <title>About</title>
+        <title>The Prospector - About</title>
     </head>
 <body>
     <header>
@@ -36,7 +37,7 @@
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="/about">About</a>
                         </li>
                     </ul>
                 </div>
@@ -50,7 +51,41 @@
         </div>
     </header>
     <main>
-        Welcome to the About page!
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-9">
+                    <h2 class="text-primary display-3" style="font-size: 42px;">The Prospector<span class="text-secondary" style="font-size: 36px;"> - <em>A Modern Solution to the Prospecting Problem</em></span></h2>
+                    <p class="text-secondary display-5 mt-4 ml-3">With the dramatic expansion of cloud computing over the past decade, service providers have become a mainstay in the IT landscape.  Whether its Infrastructure (IaaS), Software (Saas), or DevSecOps (MSP/MSSP), organizations around the world are choosing to outsource necessary operations to capable service providers.  While this is obviously good news for service providers, many still struggle with identifying companies that may be open to outsourcing internal processes.  That's where The Prospector comes in!  The Prospector uses a clever mix of web scraping and data analytics to help sales teams identify organizations that not only have money to spend, but can also benefit from outsorcing services they would otherwise run internally.  By automating the processes sales teams do manually, The Prospector allows you to quickly identify potential leads, gather valuable data on those organizations, and leverage that data to quickly transition those leads to viable opportunites.  Put simply, The Prospector is designed to help you make money faster!</p>
+                </div>
+                <div class="col-3">
+                    <img src="{% static 'img/about/office.jpg' %}" alt="Computer Stock Photo" id="about-photo-1" class="img-fluid">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <img src="{% static 'img/about/workplace.jpg' %}" alt="Workplace Stock Photo" id="about-photo-2" class="img-fluid">
+                </div>
+                <div class="col-8">
+                    <h2 class="text-primary display-3 mt-5" style="font-size: 30px;"><em>What is The Prospector?</em></h2>
+                    <p class="text-secondary display-5 mt-4 ml-3">The Prospector is a free, open-source web application that leverages automation and web scraping to help sales teams identify potitial leads, as well as gather/manage information to quickly transition qualified leads to viable opportunities.  While the prospector was designed specifically with IT service providers in mind, it can be a valuable asset to any organization that provides a desired service.</p>
+                    <h2 class="text-primary display-3 mt-5" style="font-size: 30px;"><em>How Does The Prospector Work?</em></h2>
+                    <p class="text-secondary display-5 mt-4 ml-3">The Prospector works by searching various job postings across the Internet.  This information is then used to identify companies that are currently looking to hire someone to perform a task or function directly related to the services your organization provides.  New companies discovered in these searches are immediately added to the company database and several links are provided to gather additional information relevant to the sales process.  Account Executives are then able to add information like annual revenue, employee numbers, and headquarters location to the company in an effort to qualify them as a viable opportunity.  Contacts and notes can also be added to help determine the best approach to engage with business representatives.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    <h2 class="text-primary display-3 mt-5" style="font-size: 30px;"><em>Who Built The Prospector?</em></h2>
+                    <p class="text-secondary display-5 mt-4 ml-3">I did!  I'm R-s0n, an Ethical Hacker, Cyber Security Engineer, and Full Stack Developer.  I designed and built The Prospector after working with sales teams at a major software vendor and service provider for several years.  My goal is to help connect effective service providers with companies who can benefit from their services, ultimately working to bridge the skills gap in the process.  You can learn more about me from my linked in page <a href="https://www.linkedin.com/in/harrison-richardson-cissp-7a55bb158/" target="_blank">here</a> and check out my other projects on my GitHub <a href="#"  target="_blank">here</a>.</p>
+                    <h2 class="text-primary display-3 mt-5" style="font-size: 30px;"><em>How Do I Get Started?</em></h2>
+                    <p class="text-secondary display-5 mt-4 ml-3">Simple!  Just click the <a href="/search">Search</a> link at the top of the page. From there, simply input the service you would like to provide, the city/state you're looking to provide it, and how far outside of that city you're willing to travel.  The "Radius" slider ranges from 5 km to 50 km, starting from the geologic center of the city. (Thanks Google Maps API!)</p>
+                    <p class="text-secondary display-5 mt-4 ml-3">From the list of search results, you can start doing research on any companies that look like they might be a viable opportunity.  Clicking on the company's name will take you to their information page.  You will immediately see a collection of links at the top of the page that correspond to public services used to gather detailed information about the organization.  Use as many as you need to collect detailed information, which can be added using the "Edit Company Info" button at the top of the page.  You can also add contact information, as well as put this company on your Watchlist to easily access it later.  Finally, you can add any notes you may find valuable at the bottom of the page.  Remember that notes are visable to everyone and cannot be deleted after they are added, so don't blame me if you post something NSFW and end up talking to HR on Monday morning!</p>
+                    <p class="text-secondary display-5 mt-4 ml-3 mb-5">If you happen to come across any bugs or issues, please feel free to let me know either through GitHub or LinkedIn.  I'm also always open to new feature requests, so don't be shy if you wish this tool did a better job addressing a specific use case.  With that being said, I hope you enjoy the tool!  Cheers!!</p>
+                </div>
+                <div class="col-4">
+                    <img src="{% static 'img/about/search.PNG' %}" alt="Search Photo" id="about-photo-3" class="img-fluid">
+                </div>
+            </div>
+        </div>
     </main>
     <footer>
         <div class="container-fluid">

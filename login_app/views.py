@@ -20,7 +20,7 @@ def index(request):
 
 def home(request):
     if 'userid' in request.session:
-        logged_user = User.objects.get(id=request.session['userid'])
+        logged_user = User.objects.filter(id=request.session['userid']).first()
         if logged_user.first_login == True:
             return redirect("/about")
         searches = []
@@ -47,6 +47,8 @@ def home(request):
     return redirect("/")
 
 def register(request):
+    if request.method != "POST":
+        return redirect("/")
     errors = User.objects.basic_validator(request.POST)
     if len(errors) > 0:
         for key, value in errors.items():
@@ -55,13 +57,18 @@ def register(request):
     else:
         password = request.POST['passwd']
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        new_user = User.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], password=pw_hash, last_login=timezone.now())
-        new_user.save()
-        logged_user = User.objects.get(email=request.POST['email'])
+        users = User.objects.all()
+        if not users:
+            new_user = User.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], password=pw_hash, admin=True, last_login=timezone.now())
+        else:
+            new_user = User.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], password=pw_hash, last_login=timezone.now())
+        logged_user = User.objects.filter(email=request.POST['email']).first()
         request.session['userid'] = logged_user.id
         return redirect("/home")
 
 def login(request):
+    if request.method != "POST":
+        return redirect("/")
     errors = User.objects.login_validator(request.POST)
     if len(errors) > 0:
         for key, value in errors.items():
@@ -76,20 +83,27 @@ def login(request):
                 logged_user.last_login = timezone.now()
                 logged_user.save()
                 return redirect('/home')
+        messages.error(request, "Invalid Credentials")
         return redirect("/")
 
 def logout(request):
+    if 'userid' not in request.session:
+        return redirect("/")
     del request.session['userid']
     return redirect("/")
 
 def register_form(request):
+    if 'userid' in request.session:
+        logged_user = User.objects.filter(id=request.session['userid'])
+        if logged_user:
+            return redirect("/home")
     return render(request, "index_register.html")
 
 def users(request):
     if 'userid' not in request.session:
         return redirect("/")
     context = {
-        "logged_user" : User.objects.get(id=request.session['userid']),
+        "logged_user" : User.objects.filter(id=request.session['userid']).first(),
         "all_users" : User.objects.all()
     }
     return render(request, "users.html", context)
@@ -102,7 +116,7 @@ def user_profile(request, id):
         return redirect("/notfound")
     context = {
         "this_user" : this_user,
-        "logged_user" : User.objects.get(id=request.session['userid'])
+        "logged_user" : User.objects.filter(id=request.session['userid']).first()
     }
     return render(request, "user_profile.html", context)
 
@@ -124,6 +138,8 @@ def user_edit(request, id):
 def edit_user_info(request):
     if 'userid' not in request.session:
         return redirect("/")
+    if request.method != "POST":
+        return redirect("/")
     this_user = User.objects.filter(id=request.POST['user_id']).first()
     logged_user = User.objects.filter(id=request.session['userid']).first()
     if logged_user.admin != True and logged_user.id != this_user.id:
@@ -143,6 +159,8 @@ def edit_user_info(request):
 
 def change_password(request):
     if 'userid' not in request.session:
+        return redirect("/")
+    if request.method != "POST":
         return redirect("/")
     this_user = User.objects.filter(id=request.POST['user_id']).first()
     logged_user = User.objects.filter(id=request.session['userid']).first()
@@ -170,6 +188,8 @@ def change_password(request):
 def make_admin(request):
     if 'userid' not in request.session:
         return redirect("/")
+    if request.method != "POST":
+        return redirect("/")
     logged_user = User.objects.filter(id=request.session['userid']).first()
     if logged_user.admin != True:
         return redirect("/")
@@ -190,6 +210,10 @@ def add_user(request):
     return render(request, "user_add.html", context)
 
 def add_user_post(request):
+    if 'userid' not in request.session:
+        return redirect("/")
+    if request.method != "POST":
+        return redirect("/")
     errors = User.objects.basic_validator(request.POST)
     if len(errors) > 0:
         for key, value in errors.items():
@@ -200,7 +224,7 @@ def add_user_post(request):
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         new_user = User.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], password=pw_hash, last_login=timezone.now())
         new_user.save()
-        logged_user = User.objects.get(email=request.POST['email'])
+        logged_user = User.objects.filter(email=request.POST['email']).first()
         request.session['userid'] = logged_user.id
         return redirect("/home")
 
@@ -214,6 +238,8 @@ def search(request):
 
 def search_process(request):
     if 'userid' not in request.session:
+        return redirect("/")
+    if request.method != "POST":
         return redirect("/")
     errors = Search.objects.search_validator(request.POST)
     if len(errors) > 0:
@@ -254,7 +280,6 @@ def search_process(request):
     dates = soup.find_all('span', class_="date")
     for date in dates:
         date_posted.append(date.get_text())
-
     for i in range(len(jobs)):
         this_job = Job.objects.create(title=job_titles[i], date_posted=date_posted[i], company=company_objects_list[i])
         this_search.jobs.add(this_job)
@@ -349,6 +374,8 @@ def edit_company_info(request, id):
 def process_edit_company(request):
     if 'userid' not in request.session:
         return redirect("/")
+    if request.method != "POST":
+        return redirect("/")
     logged_user = User.objects.filter(id=request.session['userid']).first()
     this_company = Company.objects.filter(id=request.POST['company_id']).first()
     if request.POST['headquarters']:
@@ -377,6 +404,8 @@ def add_contact(request, id):
 
 def process_add_contact(request):
     if 'userid' not in request.session:
+        return redirect("/")
+    if request.method != "POST":
         return redirect("/")
     Contact.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], linked_in=request.POST['linked_in'], department=request.POST['department'], position=request.POST['position'], notes=request.POST['notes'], company=Company.objects.filter(id=request.POST['company_id']).first())
     return redirect(f"/company/{request.POST['company_id']}")
@@ -502,3 +531,6 @@ def about(request):
         "logged_user" : logged_user
     }
     return render(request, "about.html", context)
+
+def bad_request(request, path):
+    return render(request, "404_not_found.html")

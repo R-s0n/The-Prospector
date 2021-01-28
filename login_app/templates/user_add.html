@@ -3,11 +3,12 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'user_add_style.css' %}">
     <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-    <title>Login & Registration</title>
+    <title>The Prospector - Add User</title>
 </head>
 <body>
     <header>
@@ -36,7 +37,7 @@
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="/about">About</a>
                         </li>
                     </ul>
                 </div>

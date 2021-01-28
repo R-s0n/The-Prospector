@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-    <html lang="en">
-        <head>
-            {% load static %}
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-            <link rel="stylesheet" href="{% static 'search_results.css' %}">
-            <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-            <title>Search Results</title>
-        </head>
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}"/>
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'search_results.css' %}">
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+        <title>The Prospector - Search Results</title>
+    </head>
 <body>
     <header>
         <div class="container-fluid">
@@ -37,7 +37,7 @@
                             </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="/about">About</a>
                         </li>
                     </ul>
                 </div>
