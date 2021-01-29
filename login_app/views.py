@@ -53,7 +53,7 @@ def register(request):
     if len(errors) > 0:
         for key, value in errors.items():
             messages.error(request, value)
-        return redirect("/register_form")
+        return redirect("/register/form")
     else:
         password = request.POST['passwd']
         pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
@@ -533,4 +533,9 @@ def about(request):
     return render(request, "about.html", context)
 
 def bad_request(request, path):
-    return render(request, "404_not_found.html")
+    if 'userid' not in request.session:
+        return redirect("/")
+    context = {
+        "logged_user" : User.objects.filter(id=request.session['userid']).first()
+    }
+    return render(request, "404_not_found.html", context)
