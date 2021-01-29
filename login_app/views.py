@@ -225,8 +225,7 @@ def add_user_post(request):
         new_user = User.objects.create(first_name=request.POST['fname'], last_name=request.POST['lname'], email=request.POST['email'], password=pw_hash, last_login=timezone.now())
         new_user.save()
         logged_user = User.objects.filter(email=request.POST['email']).first()
-        request.session['userid'] = logged_user.id
-        return redirect("/home")
+        return redirect("/users")
 
 def search(request):
     if 'userid' not in request.session:
