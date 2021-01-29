@@ -554,5 +554,3 @@ def user_delete(request, id):
         return redirect("/")
     this_user.delete()
     return redirect("/users")
-
-#Test Commit
