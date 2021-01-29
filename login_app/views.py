@@ -548,5 +548,9 @@ def user_delete(request, id):
         return redirect("/notfound")
     if logged_user.admin != True and logged_user.id != this_user.id:
         return redirect("/home")
+    if logged_user.id == this_user.id:
+        del request.session['userid']
+        this_user.delete()
+        return redirect("/")
     this_user.delete()
     return redirect("/users")
