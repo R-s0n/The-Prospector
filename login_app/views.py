@@ -539,3 +539,15 @@ def bad_request(request, path):
         "logged_user" : User.objects.filter(id=request.session['userid']).first()
     }
     return render(request, "404_not_found.html", context)
+
+def user_delete(request, id):
+    if 'userid' not in request.session:
+        return redirect("/")
+    logged_user = User.objects.filter(id=request.session['userid']).first()
+    this_user = User.objects.filter(id=int(id)).first()
+    if not this_user:
+        return redirect("/notfound")
+    if logged_user.admin != True and logged_user.id != this_user.id:
+        return redirect("/home")
+    this_user.delete()
+    return redirect("/users")
