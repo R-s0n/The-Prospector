@@ -46,7 +46,7 @@ sqlparse==0.3.1
 tabulate==0.8.7
 terminaltables==3.1.0
 toml==0.10.2
-urllib3==1.25.10
+urllib3==1.26.5
 wcwidth==0.2.5
 Werkzeug==1.0.1
 wordcloud==1.8.1
